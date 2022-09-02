@@ -84,7 +84,6 @@ const GlobalStyles = createGlobalStyle`
     unicode-range: U+AC00-U+D7A3;
   }
   * {
-    overflow: hidden;
     margin: 0;
     font-size: 10px;
     word-break: keep-all;

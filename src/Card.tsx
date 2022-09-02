@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { throttle } from './throttle';
 
 const CardWrapper = styled(motion.div)`
   width: 100vw;
@@ -8,6 +9,7 @@ const CardWrapper = styled(motion.div)`
   display: flex;
   align-items: center;
   justify-content: center;
+  perspective: 1000px;
 `;
 
 const CardFront = styled(motion.div)`
@@ -23,21 +25,23 @@ const CardFront = styled(motion.div)`
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
 `;
+
 const CardBack = styled(CardFront)`
   transform: rotateY(180deg);
 `;
 const CardContainer = styled(motion.div)`
-  perspective: 1000px;
   transform-style: preserve-3d;
   position: relative;
   width: 270px;
   height: 428px;
   border-radius: 25px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  transition: background 0.5s;
 `;
 
 const TopContainer = styled.div`
-  width: 100%;
   height: 100%;
+  width: 100%;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -54,7 +58,7 @@ const TextWrapper = styled.div`
 const CardText = styled.div<{ fontSize: number }>`
   font-weight: 600;
   font-size: ${({ fontSize }) => fontSize}px;
-  line-height: 50px;
+  line-height: 40px;
   font-family: 'Google Sans Display';
   background: linear-gradient(
     112.33deg,
@@ -101,8 +105,8 @@ export function Card() {
 
     setScrollPoint({
       ...scrollPoint,
-      x: pointX > 30 ? 30 : pointX < -30 ? -30 : pointX,
-      y: pointY > 30 ? 30 : pointY < -30 ? -30 : pointY,
+      x: pointX > 20 ? 20 : pointX < -20 ? -20 : pointX,
+      y: pointY > 20 ? 20 : pointY < -20 ? -20 : pointY,
     });
   };
   const mouseUp = (e: TouchEvent) => {
@@ -127,9 +131,9 @@ export function Card() {
     //action on double tap goes below
     setTap((prevState) => !prevState);
   }
-  const lightX = (scrollPoint.x / 30) * 100;
+  const lightX = (scrollPoint.x / 20) * 100;
   //
-  const lightY = (scrollPoint.y / 30) * 100;
+  const lightY = (scrollPoint.y / 20) * 100;
 
   const setLight = useCallback(() => {
     if (!cardRef.current) return;
@@ -140,10 +144,10 @@ export function Card() {
 
   useEffect(() => {
     if (!windowRef.current || !cardRef.current) return;
-    windowRef.current.addEventListener('touchstart', mouseDown);
-    windowRef.current.addEventListener('touchmove', mouseMove);
-    windowRef.current.addEventListener('touchend', mouseUp);
-    windowRef.current.addEventListener('touchstart', tapHandler);
+    windowRef.current.addEventListener('touchstart', throttle(mouseDown, 100));
+    windowRef.current.addEventListener('touchmove', throttle(mouseMove, 100));
+    windowRef.current.addEventListener('touchend', throttle(mouseUp, 100));
+    windowRef.current.addEventListener('touchstart', throttle(tapHandler, 100));
     cardRef.current.style.background = `radial-gradient(
       circle at ${lightX}% ${lightY}%, #484848, #191919)`;
     return () => {
@@ -158,6 +162,9 @@ export function Card() {
     <CardWrapper ref={windowRef}>
       <CardContainer
         ref={cardRef}
+        transition={{
+          duration: 0.3,
+        }}
         animate={{
           rotateX: -scrollPoint.y,
           rotateY: tap ? -scrollPoint.x - 180 : -scrollPoint.x,
@@ -175,9 +182,10 @@ export function Card() {
         <CardBack>
           <TopContainer>
             <TextWrapper>
-              <CardText fontSize={20}>back</CardText>
-              <CardText fontSize={40}>Jason</CardText>
-              <CardText fontSize={20}>Frontend Developer</CardText>
+              <CardText fontSize={30}>Google</CardText>
+              <CardText fontSize={30}>Developer</CardText>
+              <CardText fontSize={30}>Student</CardText>
+              <CardText fontSize={30}>Clubs</CardText>
             </TextWrapper>
           </TopContainer>
         </CardBack>
