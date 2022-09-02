@@ -10,19 +10,16 @@
   },
   "dependencies": {
     "@gdsc-dju/styled-components": "^0.0.18",
-    "@react-three/drei": "^9.23.1",
-    "@react-three/fiber": "^8.5.0",
     "framer-motion": "^7.2.0",
+    "localtunnel": "^2.0.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "styled-components": "^5.3.5",
-    "three": "^0.143.0"
+    "styled-components": "^5.3.5"
   },
   "devDependencies": {
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
     "@types/styled-components": "^5.1.26",
-    "@types/three": "^0.143.1",
     "@typescript-eslint/eslint-plugin": "^5.33.1",
     "@typescript-eslint/parser": "^5.33.1",
     "@vitejs/plugin-react": "^2.0.1",

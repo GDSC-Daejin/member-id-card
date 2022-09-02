@@ -1,13 +1,6 @@
-import {
-  motion,
-  transform,
-  useDragControls,
-  useMotionValue,
-  useTransform,
-} from 'framer-motion';
-import styled, { css } from 'styled-components';
-import { ShoesDetails } from './Detail';
-import React, { useEffect, useRef, useState } from 'react';
+import { motion } from 'framer-motion';
+import styled from 'styled-components';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 const CardWrapper = styled(motion.div)`
   width: 100vw;
@@ -17,42 +10,29 @@ const CardWrapper = styled(motion.div)`
   justify-content: center;
 `;
 
-const CardContainer = styled(motion.div)`
+const CardFront = styled(motion.div)`
+  position: absolute;
   width: 270px;
   height: 428px;
   display: flex;
   flex-direction: column;
-  border: 1px solid ${({ theme }) => theme.colors.grey700};
   border-radius: 25px;
   box-shadow: ${({ theme }) => theme.colors.boxShadow100};
-  transform-style: preserve-3d;
-  perspective: 1000px;
-  background: radial-gradient(circle at 100%, #9f9f9f, #191919);
-  overflow: hidden;
   color: #fff;
-  position: relative;
   cursor: grab;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 `;
-
-const CircleWrapper = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  min-width: 100%;
-  min-height: 100%;
-  overflow: hidden;
-  border-top-right-radius: 25px;
+const CardBack = styled(CardFront)`
+  transform: rotateY(180deg);
 `;
-
-const Circle = styled.div`
-  position: absolute;
-  width: 350px;
-  height: 350px;
-  top: -4.2em;
-  right: -10em;
-  z-index: 5;
-  background-color: #fbbe01;
-  border-radius: 50%;
+const CardContainer = styled(motion.div)`
+  perspective: 1000px;
+  transform-style: preserve-3d;
+  position: relative;
+  width: 270px;
+  height: 428px;
+  border-radius: 25px;
 `;
 
 const TopContainer = styled.div`
@@ -60,8 +40,6 @@ const TopContainer = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
-  position: relative;
-
   box-sizing: border-box;
   justify-content: flex-end;
   padding: 30px;
@@ -70,24 +48,24 @@ const TopContainer = styled.div`
 const TextWrapper = styled.div`
   display: flex;
   flex-direction: column;
+  opacity: 0.8;
 `;
 
-const NikeText = styled.div<{ fontSize: number }>`
+const CardText = styled.div<{ fontSize: number }>`
   font-weight: 600;
   font-size: ${({ fontSize }) => fontSize}px;
   line-height: 50px;
+  font-family: 'Google Sans Display';
   background: linear-gradient(
     112.33deg,
     rgba(255, 255, 255, 0.5) 1.48%,
     #ffe49f 25.91%,
     rgba(255, 255, 255, 0) 113.16%
   );
-  -webkit-text-stroke: 1px #fff;
-
-  background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  text-fill-color: transparent;
+  background-clip: text;
+  -webkit-text-stroke: 0.4px #ffffff;
   &:focus {
     outline: none;
   }
@@ -95,6 +73,9 @@ const NikeText = styled.div<{ fontSize: number }>`
 
 export function Card() {
   const windowRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [tap, setTap] = useState(false);
+
   const downPoint = useRef({
     x: 0,
     y: 0,
@@ -103,59 +84,95 @@ export function Card() {
     x: 0,
     y: 0,
   });
-  const mouseDown = (e: React.TouchEvent<HTMLDivElement>) => {
+  const mouseDown = (e: TouchEvent) => {
     if (windowRef.current && windowRef.current.style.cursor !== 'grabbing') {
-      // console.log('x down' + e.clientX);
-      console.log('y down' + e.touches[0].clientY);
       windowRef.current.style.cursor = 'grabbing';
       downPoint.current.x = e.touches[0].clientX;
       downPoint.current.y = e.touches[0].clientY;
-      // console.log(`downPoint: ${downPoint.current.x} ${downPoint.current.y}`);
     }
   };
-  const mouseMove = (e: React.TouchEvent<HTMLDivElement>) => {
+  const mouseMove = (e: TouchEvent) => {
     if (windowRef.current?.style.cursor != 'grabbing') return;
     const upX = e.touches[0].clientX;
     const upY = e.touches[0].clientY;
-    console.log(upX);
-    console.log(downPoint.current.x);
-    // console.log(upY);
+
+    const pointX = upX - downPoint.current.x;
+    const pointY = upY - downPoint.current.y;
 
     setScrollPoint({
       ...scrollPoint,
-      x: upX - downPoint.current.x,
-      y: upY - downPoint.current.y,
+      x: pointX > 30 ? 30 : pointX < -30 ? -30 : pointX,
+      y: pointY > 30 ? 30 : pointY < -30 ? -30 : pointY,
     });
-    console.log(`scrollPoint: ${scrollPoint.x} ${scrollPoint.y}`);
   };
-  const mouseUp = (e: React.TouchEvent<HTMLDivElement>) => {
+  const mouseUp = (e: TouchEvent) => {
     setScrollPoint({
       ...scrollPoint,
-      x: scrollPoint.x % 360,
-      y: scrollPoint.y % 360,
+      x: scrollPoint.x,
+      y: scrollPoint.y,
     });
   };
+  const lightX = (scrollPoint.x / 30) * 100;
+  //
+  const lightY = (scrollPoint.y / 30) * 100;
+
+  const setLight = useCallback(() => {
+    if (!cardRef.current) return;
+    cardRef.current.style.background = `radial-gradient(
+      circle at ${tap ? lightX : lightX + 180}% ${lightY}%, #484848, #191919)`;
+  }, [scrollPoint, cardRef]);
+  setLight();
+
+  useEffect(() => {
+    if (!windowRef.current || !cardRef.current) return;
+    windowRef.current.addEventListener('touchstart', mouseDown);
+    windowRef.current.addEventListener('touchmove', mouseMove);
+    windowRef.current.addEventListener('touchend', mouseUp);
+    windowRef.current.addEventListener('to', () => {
+      setTap(!tap);
+      console.log(tap);
+    });
+    cardRef.current.style.background = `radial-gradient(
+      circle at ${lightX}% ${lightY}%, #484848, #191919)`;
+    return () => {
+      if (!windowRef.current) return;
+      windowRef.current.removeEventListener('touchstart', mouseDown);
+      windowRef.current.removeEventListener('touchmove', mouseMove);
+      windowRef.current.removeEventListener('touchend', mouseUp);
+    };
+  }, []);
 
   return (
-    <CardWrapper
-      onTouchMove={mouseMove}
-      onTouchEnd={mouseUp}
-      onTouchStart={mouseDown}
-      ref={windowRef}
-    >
+    <CardWrapper ref={windowRef}>
       <CardContainer
+        onDoubleClick={() => {
+          setTap(!tap);
+          console.log(tap);
+        }}
+        ref={cardRef}
         animate={{
           rotateX: -scrollPoint.y,
-          rotateY: -scrollPoint.x,
+          rotateY: tap ? -scrollPoint.x - 180 : -scrollPoint.x,
         }}
       >
-        <TopContainer>
-          <TextWrapper>
-            <NikeText fontSize={20}>MEMBER</NikeText>
-            <NikeText fontSize={40}>Jason</NikeText>
-            <NikeText fontSize={20}>Frontend Developer</NikeText>
-          </TextWrapper>
-        </TopContainer>
+        <CardFront>
+          <TopContainer>
+            <TextWrapper>
+              <CardText fontSize={20}>MEMBER</CardText>
+              <CardText fontSize={40}>Jason</CardText>
+              <CardText fontSize={20}>Frontend Developer</CardText>
+            </TextWrapper>
+          </TopContainer>
+        </CardFront>
+        <CardBack>
+          <TopContainer>
+            <TextWrapper>
+              <CardText fontSize={20}>back</CardText>
+              <CardText fontSize={40}>Jason</CardText>
+              <CardText fontSize={20}>Frontend Developer</CardText>
+            </TextWrapper>
+          </TopContainer>
+        </CardBack>
       </CardContainer>
     </CardWrapper>
   );
