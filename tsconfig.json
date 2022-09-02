@@ -4,7 +4,7 @@
     "useDefineForClassFields": true,
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "allowJs": false,
-    "skipLibCheck": false,
+    "skipLibCheck": true,
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
     "strict": true,
@@ -14,9 +14,20 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "baseUrl": "./src",
+    "paths": {
+      "@layout/*": [ "./components/layout/*" ],
+      "@common/*": [ "./components/common/*" ],
+      "@animations/*": [ "./components/animations/*" ],
+      "@assets/*": [ "./assets/*" ],
+      "@pages/*": [ "./pages/*" ],
+      "@utils/*": [ "./utils/*" ],
+      "@type/*": [ "./types/*" ],
+      "@styles/*": [ "./styles/*" ],
+      "@src/*": [ "*" ]
+    }
   },
-  "include": ["src"],
-  "exclude": ["node_modules/**", "**/*.d.ts"],
+  "include": ["src", "./vite.config.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
