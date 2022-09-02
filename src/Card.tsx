@@ -71,6 +71,12 @@ const CardText = styled.div<{ fontSize: number }>`
   -webkit-text-fill-color: transparent;
   background-clip: text;
   -webkit-text-stroke: 0.4px #ffffff;
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none;
   &:focus {
     outline: none;
   }
@@ -78,6 +84,12 @@ const CardText = styled.div<{ fontSize: number }>`
 
 const Logo = styled.img`
   width: 34px;
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none;
 `;
 
 export function Card() {
