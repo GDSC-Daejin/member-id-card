@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import GDSCLogo from './assets/GDSCLogo.svg';
 import { throttle } from './throttle';
 
 const CardWrapper = styled(motion.div)`
@@ -45,7 +46,7 @@ const TopContainer = styled.div`
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-  justify-content: flex-end;
+  justify-content: space-between;
   padding: 30px;
 `;
 
@@ -73,6 +74,10 @@ const CardText = styled.div<{ fontSize: number }>`
   &:focus {
     outline: none;
   }
+`;
+
+const Logo = styled.img`
+  width: 34px;
 `;
 
 export function Card() {
@@ -172,6 +177,7 @@ export function Card() {
       >
         <CardFront>
           <TopContainer>
+            <Logo src={GDSCLogo} />
             <TextWrapper>
               <CardText fontSize={20}>MEMBER</CardText>
               <CardText fontSize={40}>Jason</CardText>
@@ -181,6 +187,7 @@ export function Card() {
         </CardFront>
         <CardBack>
           <TopContainer>
+            <Logo src={GDSCLogo} />
             <TextWrapper>
               <CardText fontSize={30}>Google</CardText>
               <CardText fontSize={30}>Developer</CardText>
