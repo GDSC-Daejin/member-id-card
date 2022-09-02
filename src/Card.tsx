@@ -112,6 +112,21 @@ export function Card() {
       y: scrollPoint.y,
     });
   };
+
+  let tapedTwice = false;
+
+  function tapHandler(e: TouchEvent) {
+    if (!tapedTwice) {
+      tapedTwice = true;
+      setTimeout(function () {
+        tapedTwice = false;
+      }, 300);
+      return false;
+    }
+    e.preventDefault();
+    //action on double tap goes below
+    setTap((prevState) => !prevState);
+  }
   const lightX = (scrollPoint.x / 30) * 100;
   //
   const lightY = (scrollPoint.y / 30) * 100;
@@ -128,10 +143,7 @@ export function Card() {
     windowRef.current.addEventListener('touchstart', mouseDown);
     windowRef.current.addEventListener('touchmove', mouseMove);
     windowRef.current.addEventListener('touchend', mouseUp);
-    windowRef.current.addEventListener('to', () => {
-      setTap(!tap);
-      console.log(tap);
-    });
+    windowRef.current.addEventListener('touchstart', tapHandler);
     cardRef.current.style.background = `radial-gradient(
       circle at ${lightX}% ${lightY}%, #484848, #191919)`;
     return () => {
@@ -145,10 +157,6 @@ export function Card() {
   return (
     <CardWrapper ref={windowRef}>
       <CardContainer
-        onDoubleClick={() => {
-          setTap(!tap);
-          console.log(tap);
-        }}
         ref={cardRef}
         animate={{
           rotateX: -scrollPoint.y,
