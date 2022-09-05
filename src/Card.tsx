@@ -158,14 +158,14 @@ export function Card() {
     //action on double tap goes below
     setTap((prevState) => !prevState);
   }
-  const lightX = (scrollPoint.x / 20) * 100;
+  const lightX = (scrollPoint.x / 10) * 100;
   //
-  const lightY = (scrollPoint.y / 20) * 100;
+  const lightY = (scrollPoint.y / 10) * 100;
 
   const setLight = useCallback(() => {
     if (!cardRef.current) return;
     cardRef.current.style.background = `radial-gradient(
-      circle at ${tap ? lightX : lightX + 180}% ${lightY}%, #484848, #191919)`;
+      circle at ${tap ? lightX : lightX + 180}% ${lightY}%, #5F5E5E, #191919)`;
   }, [scrollPoint, cardRef]);
   setLight();
 
@@ -176,7 +176,7 @@ export function Card() {
     windowRef.current.addEventListener('touchend', throttle(mouseUp, 100));
     windowRef.current.addEventListener('touchstart', throttle(tapHandler, 100));
     cardRef.current.style.background = `radial-gradient(
-      circle at ${lightX}% ${lightY}%, #484848, #191919)`;
+      circle at ${lightX}% ${lightY}%, #5F5E5E, #191919)`;
     return () => {
       if (!windowRef.current) return;
       windowRef.current.removeEventListener('touchstart', mouseDown);
