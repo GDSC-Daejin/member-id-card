@@ -56,11 +56,12 @@ const TextWrapper = styled.div`
   opacity: 0.8;
 `;
 
-const CardText = styled.div<{ fontSize: number }>`
+const CardText = styled.div<{ fontSize: number; lineHeight?: string }>`
   font-weight: 600;
   font-size: ${({ fontSize }) => fontSize}px;
   line-height: 40px;
-  font-family: 'Google Sans Display';
+  ${({ lineHeight }) => lineHeight && `line-height: ${lineHeight};`}
+  font-family: 'Google Sans Display', 'Spoqa Han Sans Neo';
   background: linear-gradient(
     112.33deg,
     rgba(255, 255, 255, 0.5) 1.48%,
@@ -80,6 +81,13 @@ const CardText = styled.div<{ fontSize: number }>`
   &:focus {
     outline: none;
   }
+`;
+const RowText = styled.div`
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 6px;
 `;
 
 const Logo = styled.img`
@@ -101,10 +109,12 @@ export function Card() {
     x: 0,
     y: 0,
   });
+
   const [scrollPoint, setScrollPoint] = useState({
     x: 0,
     y: 0,
   });
+
   const mouseDown = (e: TouchEvent) => {
     if (windowRef.current && windowRef.current.style.cursor !== 'grabbing') {
       windowRef.current.style.cursor = 'grabbing';
@@ -189,9 +199,11 @@ export function Card() {
       >
         <CardFront>
           <TopContainer>
-            <Logo src={GDSCLogo} />
+            <RowText>
+              <Logo src={GDSCLogo} />
+            </RowText>
             <TextWrapper>
-              <CardText fontSize={20}>MEMBER</CardText>
+              <CardText fontSize={20}>Lead</CardText>
               <CardText fontSize={40}>Jason</CardText>
               <CardText fontSize={20}>Frontend Developer</CardText>
             </TextWrapper>
@@ -199,12 +211,15 @@ export function Card() {
         </CardFront>
         <CardBack>
           <TopContainer>
-            <Logo src={GDSCLogo} />
+            <div>
+              <Logo src={GDSCLogo} />
+            </div>
             <TextWrapper>
-              <CardText fontSize={30}>Google</CardText>
-              <CardText fontSize={30}>Developer</CardText>
-              <CardText fontSize={30}>Student</CardText>
-              <CardText fontSize={30}>Clubs</CardText>
+              <CardText fontSize={20}>정준혁</CardText>
+              <CardText fontSize={14}>Frontend Developer</CardText>
+              <CardText fontSize={14}>M +82 10.2544.1586</CardText>
+              <CardText fontSize={14}>jhjeong00@gmail.com</CardText>
+              <CardText fontSize={14}>web.gdsc-dju.com</CardText>
             </TextWrapper>
           </TopContainer>
         </CardBack>
